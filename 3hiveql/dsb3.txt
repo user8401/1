@@ -1,0 +1,83 @@
+1)create a database
+CREATE DATABASE mydatabase;
+
+2)create a table
+CREATE TABLE employees (
+  id INT,
+  name STRING,
+  salary DECIMAL(10,2)
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+3)drop table
+DROP TABLE employees;
+
+4)altering table
+ALTER TABLE employees ADD COLUMN department STRING;
+
+ALTER TABLE employees DROP COLUMN department;
+
+ALTER TABLE employees CHANGE COLUMN department department_name STRING;
+
+ALTER TABLE employees CHANGE COLUMN salary new_salary DECIMAL(12,2);
+
+5)creating a external hive table
+CREATE EXTERNAL TABLE employees (
+  id INT,
+  name STRING,
+  salary DECIMAL(10,2)
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/user/hive/external/employees';
+
+6)load table with data
+LOAD DATA LOCAL INPATH '/path/to/local/file.csv' INTO TABLE employees;
+
+LOAD DATA INPATH '/user/hive/data/file.csv' INTO TABLE employees;
+
+LOAD DATA INPATH 'hdfs_file_path' INTO TABLE table_name
+  ROW FORMAT DELIMITED
+  FIELDS TERMINATED BY ','
+  ;
+
+7)insert new values in table
+INSERT INTO employees (id, name, salary)
+VALUES
+  (1, 'John Doe', 5000),
+  (2, 'Jane Smith', 6000),
+  (3, 'Mike Johnson', 5500);
+
+ALTER TABLE employees ADD COLUMN department STRING;
+
+8)join table in hive
+SELECT t1.column1, t1.column2, t2.column3
+FROM table1 t1
+JOIN table2 t2 ON t1.key = t2.key;
+
+SELECT t1.column1, t1.column2, t2.column3
+FROM table1 t1
+INNER JOIN table2 t2 ON t1.key = t2.key;
+
+9)create index
+CREATE TABLE flight_information (
+  flight_number STRING,
+  airline STRING,
+  departure_airport STRING,
+  arrival_airport STRING,
+  -- other columns
+)
+PARTITIONED BY (date STRING);
+
+ALTER TABLE flight_information ADD PARTITION (date='2023-05-01');
+ALTER TABLE flight_information ADD PARTITION (date='2023-05-02');
+-- Add more partitions as needed
+
+10)average departuredelay
+SELECT date, AVG(departure_delay) AS average_departure_delay
+FROM flight_information
+WHERE year = 2008
+GROUP BY date;
+

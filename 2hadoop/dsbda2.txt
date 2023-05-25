@@ -1,0 +1,84 @@
+To design a distributed application using MapReduce in Java to process a log file and identify the users who have logged in for the maximum period, you can follow these steps:
+
+Set up the Hadoop environment:
+
+Install and configure Hadoop in a pseudo-distributed mode. You can refer to the official Hadoop documentation for detailed instructions on setting up Hadoop: https://hadoop.apache.org/documentation/
+Create a Java project:
+
+Set up a Java project in your preferred Integrated Development Environment (IDE).
+Implement the MapReduce job:
+
+Create a Mapper class that extends the Mapper class from the Hadoop library. This class will read the log file and emit key-value pairs, where the key is the user and the value is the duration of their session.
+
+public class LogMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
+    @Override
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        // Parse the log line and extract user and session duration information
+        String logLine = value.toString();
+        // Extract the user and session duration from the log line
+        String user = ...
+        long duration = ...
+
+        // Emit key-value pair
+        context.write(new Text(user), new LongWritable(duration));
+    }
+}
+
+Create a Reducer class that extends the Reducer class from the Hadoop library. This class will receive the user and their session durations and calculate the maximum duration for each user.
+
+public class LogReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
+    @Override
+    protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+        long maxDuration = Long.MIN_VALUE;
+
+        // Iterate through the session durations and find the maximum duration
+        for (LongWritable duration : values) {
+            maxDuration = Math.max(maxDuration, duration.get());
+        }
+
+        // Emit the user and their maximum duration
+        context.write(key, new LongWritable(maxDuration));
+    }
+}
+
+Set up the main driver class:
+
+Create a main driver class that configures and runs the MapReduce job.
+
+public class LogAnalyzer {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "Log Analyzer");
+
+        // Set the main class and mapper/reducer classes
+        job.setJarByClass(LogAnalyzer.class);
+        job.setMapperClass(LogMapper.class);
+        job.setReducerClass(LogReducer.class);
+
+        // Set the output key and value classes
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
+
+        // Set the input and output paths
+        FileInputFormat.addInputPath(job, new Path("input/logfile.txt"));
+        FileOutputFormat.setOutputPath(job, new Path("output"));
+
+        // Run the job and wait for completion
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+Compile and package the Java project into a JAR file.
+
+Upload the log file to Hadoop:
+
+Copy the log file to the Hadoop Distributed File System (HDFS) using the following command:
+
+$ hdfs dfs -put /path/to/logfile.txt /input
+
+Run the MapReduce job on Hadoop:
+
+Submit the MapReduce job to Hadoop using the following command:
+
+$ hadoop jar LogAnalyzer.jar LogAnalyzer
+

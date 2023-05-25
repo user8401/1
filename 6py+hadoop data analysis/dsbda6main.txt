@@ -1,0 +1,73 @@
+mapper.py
+#!/usr/bin/env python
+import sys
+for line in sys.stdin:
+    fields = line.strip().split(',')
+    month = fields[2]
+    temp = float(fields[8])
+    area = float(fields[12])
+    print(f'{month}\t{temp}\t{area}')
+
+reducer.py
+#!/usr/bin/env python
+import sys
+current_month = None
+total_temp = 0
+total_area = 0
+for line in sys.stdin:
+    month, temp, area = line.strip().split('\t')
+    temp = float(temp)
+    area = float(area)
+    if current_month == month:
+        total_temp += temp
+        total_area += area
+    else:
+        if current_month:
+            avg_temp = total_temp / total_area if total_area > 0 else 0
+print(f'{current_month}\t{avg_temp}\t{total_area}')
+        current_month = month
+        total_temp = temp
+        total_area = area
+if current_month:
+    avg_temp = total_temp / total_area if total_area > 0 else 0
+    print(f'{current_month}\t{avg_temp}\t{total_area}')
+
+$ hadoop jar <path_to_hadoop_streaming_jar> -input <input_path> -output <output_path> -mapper "python mapper.py" -reducer "python reducer.py"
+
+Replace <path_to_hadoop_streaming_jar> with the actual path to the Hadoop Streaming JAR file, <input_path> with the input data path, and <output_path> with the desired output directory path.
+
+DATA MINING
+$ hive
+
+
+CREATE TABLE forest_fire (
+    X INT,
+    Y INT,
+    Month STRING,
+    Day STRING,
+    FFMC FLOAT,
+    DMC FLOAT,
+    DC FLOAT,
+    ISI FLOAT,
+    Temp FLOAT,
+    RH INT,
+    Wind FLOAT,
+    Rain FLOAT,
+    Area FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
+
+LOAD DATA INPATH '<input_path>' INTO TABLE forest_fire;
+
+SELECT Month, AVG(Temp) AS AvgTemperature, SUM(Area) AS TotalArea
+FROM forest_fire
+GROUP BY Month;
+
+SELECT Temp, Area
+FROM forest_fire
+WHERE Temp = (SELECT MAX(Temp) FROM forest_fire);
+
+SELECT Day, COUNT(*) AS Occurrences
+FROM forest_fire
+GROUP BY Day;

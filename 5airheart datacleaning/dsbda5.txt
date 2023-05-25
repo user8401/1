@@ -1,0 +1,95 @@
+a) Data Cleaning
+
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Handling missing values
+df.dropna()  # Drop rows with any missing values
+df.fillna(value)  # Replace missing values with a specific value
+df.dropna(axis=1)  # Drop columns with any missing values
+
+# Removing outliers
+# Example using z-score
+from scipy import stats
+z_scores = stats.zscore(df['numeric_column'])
+df = df[(z_scores < 3)]  # Keep values within 3 standard deviations
+
+# Handling inconsistent data
+df['categorical_column'] = df['categorical_column'].str.lower()  # Convert to lowercase
+df = df.drop_duplicates()  # Remove duplicate rows
+
+# Checking data integrity
+# Perform checks to ensure data is complete and accurate
+# Example: Check for missing values
+missing_values = df.isnull().sum()
+print(missing_values)
+
+# Save the cleaned dataset
+df.to_csv('cleaned_dataset.csv', index=False)
+
+b) Data Integration
+import pandas as pd
+
+# Load the datasets
+air_quality_df = pd.read_csv('air_quality.csv')
+heart_diseases_df = pd.read_csv('heart_diseases.csv')
+
+# Perform data integration
+merged_df = pd.merge(air_quality_df, heart_diseases_df, on='common_attribute')
+
+# Save the merged dataset
+merged_df.to_csv('integrated_dataset.csv', index=False)
+
+3) Data Transformation
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Scaling and normalization
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+scaler = MinMaxScaler()  # or StandardScaler()
+df['numeric_column_scaled'] = scaler.fit_transform(df['numeric_column'])
+
+# Encoding categorical variables
+df = pd.get_dummies(df, columns=['categorical_column'])
+
+# Feature engineering
+df['new_feature'] = df['feature1'] + df['feature2']
+
+# Aggregation and summarization
+df['date_column'] = pd.to_datetime(df['date_column'])
+df['month'] = df['date_column'].dt.month
+
+# Save the transformed dataset
+df.to_csv('transformed_dataset.csv', index=False)
+
+4) Error Correcting
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Imputing missing values
+df['numeric_column'].fillna(df['numeric_column'].mean(), inplace=True)
+df['categorical_column'].fillna(df['categorical_column'].mode()[0], inplace=True)
+
+# Correcting inconsistent values
+df['categorical_column'] = df['categorical_column'].str.upper()
+
+# Handling duplicate data
+df.drop_duplicates(inplace=True)
+
+# Resolving data discrepancies
+# Example: Correcting invalid date values
+df['date_column'] = pd.to_datetime(df['date_column'], errors='coerce')
+
+# Save the corrected dataset
+df.to_csv('corrected_dataset.csv', index=False)
+
+
+
+

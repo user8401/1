@@ -1,0 +1,51 @@
+start-dfs.sh
+start-yarn.sh
+jps
+start-all.sh
+hive
+
+CREATE DATABASE flight_info;
+USE flight_info;
+CREATE TABLE flights (
+  flight_id INT,
+  departure_date DATE,
+  departure_time STRING,
+  departure_delay INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+DROP TABLE IF EXISTS flights;
+
+ALTER TABLE flights ADD COLUMN arrival_time STRING;
+
+CREATE EXTERNAL TABLE external_flights (
+  flight_id INT,
+  departure_date DATE,
+  departure_time STRING,
+  departure_delay INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/path/to/external_table';
+
+LOAD DATA INPATH '/path/to/data.csv' INTO TABLE flights;
+
+INSERT INTO TABLE flights VALUES (1001, '2023-05-24', '10:00', 15);
+
+INSERT OVERWRITE TABLE flights
+SELECT flight_id, departure_date, departure_time, departure_delay, '12:00' AS arrival_time
+FROM flights;
+
+SELECT f.flight_id, f.departure_date, f.departure_time, a.airline_name
+FROM flights f
+JOIN airlines a ON f.flight_id = a.flight_id;
+
+CREATE INDEX idx_flight_id ON TABLE flights (flight_id);
+
+SELECT departure_date, AVG(departure_delay) AS avg_delay
+FROM flights
+WHERE departure_date >= '2008-01-01' AND departure_date <= '2008-12-31'
+GROUP BY departure_date;
+

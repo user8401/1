@@ -1,0 +1,33 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('')
+
+plt.hist(df['numeric_column'])
+plt.xlabel('Numeric Column')
+plt.ylabel('Frequency')
+plt.title('Histogram of Numeric Column')
+plt.show()
+
+plt.scatter(df['numeric_column'], df['target_variable'])
+plt.xlabel('Numeric Column')
+plt.ylabel('Target Variable')
+plt.title('Scatter Plot')
+plt.show()
+
+sns.countplot(df['categorical_column'])
+plt.xlabel('Categorical Column')
+plt.ylabel('Count')
+plt.title('Bar Chart of Categorical Column')
+plt.show()
+
+sns.boxplot(df['numeric_column'])
+plt.xlabel('Numeric Column')
+plt.title('Boxplot of Numeric Column')
+plt.show()
+
+corr_matrix = df.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()

@@ -1,0 +1,179 @@
+Set up a pseudo-distributed mode Hadoop cluster: Install and configure Hadoop in pseudo-distributed mode on your local machine. This allows you to simulate a distributed environment on a single node.
+
+Prepare the input log file: Obtain a log file from the internet or create a sample log file in a format suitable for processing. Make sure the log file contains user login entries with timestamps.
+
+Write the MapReduce program in Java:
+a. Mapper class: The mapper reads each line of the log file and extracts the user and timestamp information. It emits key-value pairs where the key is the user and the value is the timestamp.
+
+java
+Copy code
+public class LogMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
+    private final static LongWritable ONE = new LongWritable(1);
+    private Text user = new Text();
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        String line = value.toString();
+        // Extract user and timestamp from the log entry
+        String[] parts = line.split("\t"); // Adjust this based on the log file format
+        String user = parts[0];
+        long timestamp = Long.parseLong(parts[1]);
+
+        // Emit key-value pair (user, timestamp)
+        context.write(new Text(user), new LongWritable(timestamp));
+    }
+}
+b. Reducer class: The reducer receives the user and the list of timestamps associated with that user. It calculates the login duration for each user and finds the user with the maximum duration.
+
+java
+Copy code
+public class LogReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
+    public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+        long maxDuration = 0;
+        for (LongWritable value : values) {
+            long timestamp = value.get();
+            // Perform calculations to find the maximum duration for each user
+            // Update maxDuration if necessary
+            // ...
+
+        }
+        // Emit key-value pair (user, maxDuration)
+        context.write(key, new LongWritable(maxDuration));
+    }
+}
+c. Driver class: The driver class sets up the MapReduce job configuration, specifies the input and output paths, and runs the job.
+
+java
+Copy code
+public class LogAnalyzer {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "Log Analyzer");
+
+        job.setJarByClass(LogAnalyzer.class);
+        job.setMapperClass(LogMapper.class);
+        job.setReducerClass(LogReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0])); // Specify the input path
+        FileOutputFormat.setOutputPath(job, new Path(args[1])); // Specify the output path
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+Compile the Java code: Use the Java compiler (javac) to compile the Java code and generate the class files.
+
+Package the Java code: Create a JAR file that includes the compiled Java classes and any required dependencies.
+
+Transfer the log file to Hadoop: Move the log file to the Hadoop distributed file system (HDFS) so that it can be accessed by the MapReduce job.
+
+Submit and run the MapReduce job: Use the Hadoop command-line interface
+
+
+2 / 2
+
+
+
+
+
+User
+Design a distributed application using MapReduce(Using Java) which processes a 
+log file of a system. List out the users who have logged for maximum period on the 
+system. Use simple log file from the Internet and process it using a pseudo 
+distribution mode on Hadoop platform 
+explain with  code and command
+
+ChatGPT
+Certainly! Here's an example of a distributed application using MapReduce in Java to process a log file and list the users who have logged in for the maximum period on the system, using a pseudo-distributed mode on the Hadoop platform.
+
+Set up a pseudo-distributed mode Hadoop cluster:
+
+Install Hadoop in pseudo-distributed mode on your local machine. You can refer to the Hadoop documentation for detailed instructions.
+Prepare the input log file:
+
+Obtain a log file or create a sample log file with user login entries and timestamps.
+Write the MapReduce program in Java:
+
+a. Mapper class:
+
+java
+Copy code
+public class LogMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
+    private Text user = new Text();
+    private LongWritable duration = new LongWritable();
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        String line = value.toString();
+        // Split the log entry into user and timestamp
+        String[] parts = line.split("\t"); // Adjust this based on the log file format
+        String user = parts[0];
+        long timestamp = Long.parseLong(parts[1]);
+
+        // Emit key-value pair (user, timestamp)
+        context.write(new Text(user), new LongWritable(timestamp));
+    }
+}
+b. Reducer class:
+
+java
+Copy code
+public class LogReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
+    private Text user = new Text();
+    private LongWritable maxDuration = new LongWritable();
+
+    public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+        long max = 0;
+        for (LongWritable value : values) {
+            long timestamp = value.get();
+            // Calculate the duration for each user
+            // Update max if necessary
+            // ...
+
+        }
+        // Emit key-value pair (user, maxDuration)
+        context.write(key, new LongWritable(max));
+    }
+}
+c. Driver class:
+
+java
+Copy code
+public class LogAnalyzer {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "Log Analyzer");
+
+        job.setJarByClass(LogAnalyzer.class);
+        job.setMapperClass(LogMapper.class);
+        job.setReducerClass(LogReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0])); // Input path for the log file
+        FileOutputFormat.setOutputPath(job, new Path(args[1])); // Output path for the result
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+Compile the Java code:
+
+Use the Java compiler (javac) to compile the Java code and generate the class files.
+Package the Java code:
+
+Create a JAR file that includes the compiled Java classes and any required dependencies.
+Transfer the log file to Hadoop:
+
+Move the log file to the Hadoop distributed file system (HDFS) using the Hadoop command-line interface.
+Submit and run the MapReduce job:
+
+Use the following command to submit and run the MapReduce job:
+shell
+Copy code
+$ hadoop jar <path_to_jar_file> <fully_qualified_driver_class> <input_path> <output_path>
+Replace <path_to_jar_file> with the path to the JAR file containing the compiled code, <fully_qualified_driver_class> with the fully qualified class name of the driver class, `<input_path
+
+
+
+

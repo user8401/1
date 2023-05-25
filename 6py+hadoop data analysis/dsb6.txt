@@ -1,0 +1,120 @@
+To integrate Python and Hadoop and perform data analysis using MapReduce in PyHadoop on the forest fire dataset, and also perform data mining in Hive, you can follow these steps:
+
+Prepare the input data: Make sure your forest fire dataset is stored in HDFS or a location accessible to Hadoop.
+
+Data analysis using MapReduce in PyHadoop:
+
+a. Write the mapper and reducer scripts in Python: Create two separate Python scripts, one for the mapper and one for the reducer. The mapper script will read input data line by line and emit key-value pairs, and the reducer script will receive the grouped key-value pairs and perform computations.
+
+The following is an example of a mapper script (mapper.py):
+
+#!/usr/bin/env python
+import sys
+
+# Input comes from standard input (stdin)
+for line in sys.stdin:
+    # Split the line into fields
+    fields = line.strip().split(',')
+
+    # Extract the required fields for analysis
+    month = fields[2]
+    temp = float(fields[8])
+    area = float(fields[12])
+
+    # Emit key-value pairs
+    print(f'{month}\t{temp}\t{area}')
+
+The following is an example of a reducer script (reducer.py):
+
+#!/usr/bin/env python
+import sys
+
+current_month = None
+total_temp = 0
+total_area = 0
+
+# Input comes from standard input (stdin)
+for line in sys.stdin:
+    # Split the line into fields
+    month, temp, area = line.strip().split('\t')
+
+    # Convert temperature and area to float
+    temp = float(temp)
+    area = float(area)
+
+    # If the current month is equal to the new month, accumulate temperature and area
+    if current_month == month:
+        total_temp += temp
+        total_area += area
+    else:
+        # If the month has changed, emit the previous month and average temperature and area
+        if current_month:
+            avg_temp = total_temp / total_area if total_area > 0 else 0
+            print(f'{current_month}\t{avg_temp}\t{total_area}')
+
+        # Reset the current month, temperature, and area
+        current_month = month
+        total_temp = temp
+        total_area = area
+
+# Emit the last month and average temperature and area
+if current_month:
+    avg_temp = total_temp / total_area if total_area > 0 else 0
+    print(f'{current_month}\t{avg_temp}\t{total_area}')
+
+b. Run the MapReduce job: Use the Hadoop Streaming API to execute the MapReduce job. Here's an example command:
+
+$ hadoop jar <path_to_hadoop_streaming_jar> -input <input_path> -output <output_path> -mapper "python mapper.py" -reducer "python reducer.py"
+
+Replace <path_to_hadoop_streaming_jar> with the actual path to the Hadoop Streaming JAR file, <input_path> with the input data path, and <output_path> with the desired output directory path.
+
+This will run the MapReduce job, and the output will be stored in the specified output directory.
+
+Data mining in Hive:
+
+a. Start the Hive shell:
+$ hive
+Create a table to store the forest fire dataset:
+
+CREATE TABLE forest_fire (
+    X INT,
+    Y INT,
+    Month STRING,
+    Day STRING,
+    FFMC FLOAT,
+    DMC FLOAT,
+    DC FLOAT,
+    ISI FLOAT,
+    Temp FLOAT,
+    RH INT,
+    Wind FLOAT,
+    Rain FLOAT,
+    Area FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
+
+Load the data into the table:
+LOAD DATA INPATH '<input_path>' INTO TABLE forest_fire;
+
+Replace <input_path> with the path to the forest fire dataset.
+
+Perform data mining operations using Hive queries. Here are a few examples:
+
+a. Calculate the average temperature and area for each month:
+SELECT Month, AVG(Temp) AS AvgTemperature, SUM(Area) AS TotalArea
+FROM forest_fire
+GROUP BY Month;
+
+Find the maximum temperature and associated area:
+SELECT Temp, Area
+FROM forest_fire
+WHERE Temp = (SELECT MAX(Temp) FROM forest_fire);
+
+c. Count the number of occurrences for each day:
+SELECT Day, COUNT(*) AS Occurrences
+FROM forest_fire
+GROUP BY Day;
+
+
+

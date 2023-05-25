@@ -1,0 +1,35 @@
+a. Create Data Subsets:
+import pandas as pd
+
+# Load the Facebook metrics dataset
+df = pd.read_csv('facebook_metrics.csv')
+
+# Create a subset based on a condition
+subset = df[df['category'] == 'page']
+
+b. Merge Data:
+
+# Load the Facebook metrics dataset
+df1 = pd.read_csv('dataset1.csv')
+df2 = pd.read_csv('dataset2.csv')
+
+# Merge the two datasets based on a common key
+merged_df = pd.merge(df1, df2, on='common_key')
+
+c. Sort Data:
+
+# Sort the dataset based on a column
+sorted_df = df.sort_values(by='likes')
+
+d. Transposing Data:
+
+# Transpose the dataset
+transposed_df = df.transpose()
+
+e. Shape and Reshape Data:
+
+# Get the shape of the dataset
+shape = df.shape
+
+# Reshape the dataset using pivot
+reshaped_df = df.pivot(index='date', columns='category', values='likes')

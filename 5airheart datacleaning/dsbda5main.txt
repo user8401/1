@@ -1,0 +1,55 @@
+import pandas as pd
+df = pd.read_csv('your_dataset.csv')
+
+df.dropna()
+df.fillna(value)  
+df.dropna(axis=1)
+
+from scipy import stats
+z_scores = stats.zscore(df['numeric_column'])
+df = df[(z_scores < 3)]  # Keep values within 3 standard deviations
+
+df['categorical_column'] = df['categorical_column'].str.lower()
+df = df.drop_duplicates()
+
+missing_values = df.isnull().sum()
+print(missing_values)
+
+df.to_csv('cleaned_dataset.csv', index=False)
+
+air_quality_df = pd.read_csv('air_quality.csv')
+heart_diseases_df = pd.read_csv('heart_diseases.csv')
+
+merged_df = pd.merge(air_quality_df, heart_diseases_df, on='common_attribute')
+
+merged_df.to_csv('integrated_dataset.csv', index=False)
+
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+scaler = MinMaxScaler()  # or StandardScaler()
+df['numeric_column_scaled'] = scaler.fit_transform(df['numeric_column'])
+
+df = pd.get_dummies(df, columns=['categorical_column'])
+
+df['new_feature'] = df['feature1'] + df['feature2']
+
+df['date_column'] = pd.to_datetime(df['date_column'])
+df['month'] = df['date_column'].dt.month
+
+df.to_csv('transformed_dataset.csv', index=False)
+
+
+df['numeric_column'].fillna(df['numeric_column'].mean(), inplace=True)
+df['categorical_column'].fillna(df['categorical_column'].mode()[0], inplace=True)
+
+df['categorical_column'] = df['categorical_column'].str.upper()
+
+df.drop_duplicates(inplace=True)
+
+df['date_column'] = pd.to_datetime(df['date_column'], errors='coerce')
+
+df.to_csv('corrected_dataset.csv', index=False)
+
+
+
+

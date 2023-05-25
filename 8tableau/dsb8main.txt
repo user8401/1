@@ -1,0 +1,27 @@
+a. 1D (Linear) Data Visualization:
+
+Histogram: Visualize the distribution of a numerical variable such as age or petal length.
+Bar chart: Represent the frequency or count of categorical variables such as education level or species.
+b. 2D (Planar) Data Visualization:
+
+Scatter plot: Plot the relationship between two numerical variables, such as age and income or sepal length and sepal width.
+Line chart: Show the trend or change in a numerical variable over time or another continuous variable.
+c. 3D (Volumetric) Data Visualization:
+
+3D scatter plot: Visualize the relationship among three numerical variables, such as age, income, and education level.
+Bubble chart: Use the size of bubbles to represent the values of three variables.
+d. Temporal Data Visualization:
+
+Line chart or area chart: Illustrate the change in a numerical variable over time.
+Calendar view: Show the values of a variable on a calendar, highlighting specific dates or time periods.
+e. Multidimensional Data Visualization:
+
+Parallel coordinates plot: Display multiple numerical variables on parallel axes to identify patterns and relationships.
+Radar chart: Compare multiple variables using radial axes to show their values.
+f. Tree/Hierarchical Data Visualization:
+
+Tree map: Represent hierarchical data using nested rectangles, where the size of each rectangle corresponds to a variable's value.
+Sunburst chart: Visualize hierarchical data as concentric circles, with each level represented by arcs or segments.
+g. Network Data Visualization:
+
+Network graph: Display relationships between entities as nodes and links, where nodes represent entities and links represent connections or interactions.

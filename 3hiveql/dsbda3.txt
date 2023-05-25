@@ -1,0 +1,67 @@
+start-dfs.sh
+start-yarn.sh
+jps
+start-all.sh
+hive
+
+a. Creating, Dropping, and Altering Database Tables:
+-- Create a database
+CREATE DATABASE flight_info;
+
+-- Use the database
+USE flight_info;
+
+-- Create a table
+CREATE TABLE flights (
+  flight_id INT,
+  departure_date DATE,
+  departure_time STRING,
+  departure_delay INT
+);
+
+-- Drop a table
+DROP TABLE IF EXISTS flights;
+
+-- Alter table to add a new column
+ALTER TABLE flights ADD COLUMN arrival_time STRING;
+
+b. Creating an External Hive Table:
+-- Create an external table
+CREATE EXTERNAL TABLE external_flights (
+  flight_id INT,
+  departure_date DATE,
+  departure_time STRING,
+  departure_delay INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/path/to/external_table';
+
+c. Load Table with Data, Insert New Values and Field, Join Tables with Hive:
+-- Load data into a table from a file
+LOAD DATA INPATH '/path/to/data.csv' INTO TABLE flights;
+
+-- Insert new values into a table
+INSERT INTO TABLE flights VALUES (1001, '2023-05-24', '10:00', 15);
+
+-- Update a field in a table
+INSERT OVERWRITE TABLE flights
+SELECT flight_id, departure_date, departure_time, departure_delay, '12:00' AS arrival_time
+FROM flights;
+
+-- Join tables
+SELECT f.flight_id, f.departure_date, f.departure_time, a.airline_name
+FROM flights f
+JOIN airlines a ON f.flight_id = a.flight_id;
+
+d. Create Index on Flight Information Table:
+-- Create an index on flight_id column
+CREATE INDEX idx_flight_id ON TABLE flights (flight_id);
+
+e. Find the Average Departure Delay per Day in 2008:
+-- Filter flights for the year 2008 and calculate average departure delay per day
+SELECT departure_date, AVG(departure_delay) AS avg_delay
+FROM flights
+WHERE departure_date >= '2008-01-01' AND departure_date <= '2008-12-31'
+GROUP BY departure_date;
+
