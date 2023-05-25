@@ -1,0 +1,18 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+diabetes=pd.read_csv("C:\\Users\\prath\\Downloads\\diabetes.csv")
+diabetes
+_,axes=plt.subplots(1,2,sharey=True,figsize=(10,4))
+sns.boxplot(x='Outcome',y='BloodPressure',data=diabetes,ax=axes[0])
+sns.violinplot(x='Outcome',y='BloodPressure',data=diabetes,ax=axes[1])
+sns.set(rc={'figure.figsize':(16,5)})
+sns.boxplot(data=diabetes.select_dtypes(include='number'))
+plt.scatter(diabetes['DiabetesPedigreeFunction'],diabetes['BMI'])
+features=['BloodPressure','SkinThickness']
+diabetes[features].hist()
+cars=['AUDI','BMW','FORD','TESLA','JAGUAR','MERCEDES']
+data=[23,17,35,29,12,41]
+plt.pie(data,labels=cars)
+plt.show()
